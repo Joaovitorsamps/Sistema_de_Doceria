@@ -2,12 +2,16 @@
 // Arquivo principal com o menu de escolha entre Cliente ou Loja
 #include <stdio.h>
 #include <stdlib.h>
-#include "Header/cliente.h"
-#include "Header/loja.h"
-#include "Header/utils.h"
+#include <locale.h>
+#include "./Principal/cliente.h"
+#include "./Principal/loja.h"
+#include "./Principal/utils.h"
+
 
 
 int main() {
+    setlocale(LC_ALL, "Portuguese_Brazil.1252");
+    
     int opcao;
     do {
         printf("\n==== DOCERIA - MENU PRINCIPAL ===\n");

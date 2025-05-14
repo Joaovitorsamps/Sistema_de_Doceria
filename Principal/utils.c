@@ -1,5 +1,5 @@
 // utils.c - Implementa��es de fun��es auxiliares
-#include "Header/utils.h"
+#include "./utils.h"
 
 // Converte cada caractere da string para mai�sculo
 void toUpperCase(char *str) {

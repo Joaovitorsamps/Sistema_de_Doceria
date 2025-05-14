@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Header/cliente.h"
-#include "Header/utils.h"
+#include "./cliente.h"
+#include "./utils.h"
 
 #define MAX_LINHA 100
 
