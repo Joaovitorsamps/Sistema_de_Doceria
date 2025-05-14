@@ -10,8 +10,8 @@
 
 
 int main() {
-    setlocale(LC_ALL, "Portuguese_Brazil.1252");
-    
+    setlocale(LC_ALL, "Portuguese");
+
     int opcao;
     do {
         printf("\n==== DOCERIA - MENU PRINCIPAL ===\n");

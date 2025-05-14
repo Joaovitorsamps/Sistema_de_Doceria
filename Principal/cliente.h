@@ -1,4 +1,4 @@
-// cliente.h - Declarações das funções do módulo cliente
+// cliente.h - Declaraï¿½ï¿½es das funï¿½ï¿½es do mï¿½dulo cliente
 #ifndef CLIENTE_H
 #define CLIENTE_H
 

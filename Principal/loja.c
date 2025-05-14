@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h> // Para setlocale
+#include <stdbool.h> // Para usar bool
 #include "./loja.h"
 #include "./utils.h"
 
@@ -23,17 +25,17 @@ void listarUsuarios() {
         printf("%d. %s (senha: %s)\n", ++count, nome, senha);
     }
     if (count == 0) {
-        printf("Nenhum usu�rio cadastrado.\n");
+        printf("Nenhum usuário cadastrado.\n");
     }
     fclose(f);
 }
 
 // Lista todos os produtos do cardápio (arquivo cardapio.csv)
 void listarProdutos() {
-    printf("\n=== LISTA DE PRODUTOS (CARD�PIO) ===\n");
+    printf("\n=== LISTA DE PRODUTOS (CARDÁPIO) ===\n");
     FILE *f = fopen("cardapio.csv", "r");
     if (!f) {
-        printf("Erro ao abrir card�pio.\n");
+        printf("Erro ao abrir cardápio.\n");
         return;
     }
     char linha[MAX_LINHA];
@@ -54,15 +56,15 @@ void listarProdutos() {
 void adicionarProduto() {
     char nomeProduto[MAX_PRODUTO];
     int quantidade;
-    printf("\n=== ADICIONAR PRODUTO AO CARD�PIO ===\n");
+    printf("\n=== ADICIONAR PRODUTO AO CARDÁPIO ===\n");
     printf("Digite o nome do produto: ");
     scanf(" %49[^\n]", nomeProduto);
-    printf("Digite a quantidade dispon�vel: ");
+    printf("Digite a quantidade disponível: ");
     scanf("%d", &quantidade);
 
     FILE *f = fopen("cardapio.csv", "a");
     if (!f) {
-        printf("Erro ao abrir card�pio.\n");
+        printf("Erro ao abrir cardápio.\n");
         return;
     }
     fprintf(f, "%s,%d\n", nomeProduto, quantidade);
@@ -75,18 +77,18 @@ void atualizarProduto() {
     printf("\n=== ATUALIZAR QUANTIDADE DE PRODUTO ===\n");
     listarProdutos();
     int codigo, novaQtd;
-    printf("Digite o c�digo do produto para alterar a quantidade: ");
+    printf("Digite o código do produto para alterar a quantidade: ");
     scanf("%d", &codigo);
 
     FILE *f = fopen("cardapio.csv", "r");
     if (!f) {
-        printf("Erro ao abrir card�pio.\n");
+        printf("Erro ao abrir cardápio.\n");
         return;
     }
     FILE *temp = fopen("temp.csv", "w");
     if (!temp) {
         fclose(f);
-        printf("Erro ao criar arquivo tempor�rio.\n");
+        printf("Erro ao criar arquivo temporário.\n");
         return;
     }
     char linha[MAX_LINHA];
@@ -99,6 +101,10 @@ void atualizarProduto() {
         if (atual == codigo) {
             printf("Digite nova quantidade para %s: ", produto);
             scanf("%d", &novaQtd);
+            if (novaQtd < 0) {
+                printf("Quantidade não pode ser negativa. Mantendo quantidade anterior.\n");
+                novaQtd = qtd;
+            }
             fprintf(temp, "%s,%d\n", produto, novaQtd);
             encontrado = true;
         } else {
@@ -115,27 +121,27 @@ void atualizarProduto() {
         printf("Quantidade atualizada com sucesso!\n");
     } else {
         remove("temp.csv");
-        printf("Produto n�o encontrado.\n");
+        printf("Produto não encontrado.\n");
     }
 }
 
 // Remove um produto do cardápio
 void removerProduto() {
-    printf("\n=== REMOVER PRODUTO DO CARD�PIO ===\n");
+    printf("\n=== REMOVER PRODUTO DO CARDÁPIO ===\n");
     listarProdutos();
     int codigo;
-    printf("Digite o c�digo do produto para remover: ");
+    printf("Digite o código do produto para remover: ");
     scanf("%d", &codigo);
 
     FILE *f = fopen("cardapio.csv", "r");
     if (!f) {
-        printf("Erro ao abrir card�pio.\n");
+        printf("Erro ao abrir cardápio.\n");
         return;
     }
     FILE *temp = fopen("temp.csv", "w");
     if (!temp) {
         fclose(f);
-        printf("Erro ao criar arquivo tempor�rio.\n");
+        printf("Erro ao criar arquivo temporário.\n");
         return;
     }
     char linha[MAX_LINHA];
@@ -148,7 +154,7 @@ void removerProduto() {
         if (atual == codigo) {
             encontrado = true;
             printf("Produto %s removido.\n", produto);
-            // N�o escreve no temp (omite a linha removida)
+            // Não escreve no temp (omite a linha removida)
         } else {
             fprintf(temp, "%s,%d\n", produto, qtd);
         }
@@ -162,7 +168,7 @@ void removerProduto() {
         rename("temp.csv", "cardapio.csv");
     } else {
         remove("temp.csv");
-        printf("Produto n�o encontrado.\n");
+        printf("Produto não encontrado.\n");
     }
 }
 
@@ -202,7 +208,7 @@ void processarPedidos() {
     FILE *temp = fopen("temp.csv", "w");
     if (!temp) {
         if (f) fclose(f);
-        printf("Erro ao criar arquivo tempor�rio.\n");
+        printf("Erro ao criar arquivo temporário.\n");
         return;
     }
     int atual = 0;
@@ -236,8 +242,31 @@ void processarPedidos() {
         printf("Pedido atualizado com sucesso!\n");
     } else {
         remove("temp.csv");
-        printf("Pedido n�o encontrado ou n�o estava em espera.\n");
+        printf("Pedido não encontrado ou não estava em espera.\n");
     }
+}
+
+// Lista todos os pedidos do arquivo "pedidos.csv"
+void listarTodosPedidos() {
+    printf("\n=== LISTA COMPLETA DE PEDIDOS ===\n");
+    FILE *f = fopen("pedidos.csv", "r");
+    if (!f) {
+        printf("Erro ao abrir arquivo de pedidos.\n");
+        return;
+    }
+    char linha[MAX_LINHA];
+    int count = 0;
+    while (fgets(linha, sizeof(linha), f)) {
+        char cliente[MAX_NOME], produto[MAX_PRODUTO], status[MAX_STATUS];
+        int qtd;
+        sscanf(linha, " %[^,],%[^,],%d,%19[^\n]", cliente, produto, &qtd, status);
+        printf("%d. Cliente: %-10s | Produto: %-12s | Quantidade: %2d | Status: %s\n",
+               ++count, cliente, produto, qtd, status);
+    }
+    if (count == 0) {
+        printf("Nenhum pedido cadastrado.\n");
+    }
+    fclose(f);
 }
 
 // Menu de opções da área da loja (administração)
@@ -245,14 +274,15 @@ void lojaMenu() {
     int opc;
     do {
         printf("\n--- MENU LOJA ---\n");
-        printf("1. Listar usu�rios cadastrados\n");
+        printf("1. Listar usuários cadastrados\n");
         printf("2. Listar produtos\n");
         printf("3. Adicionar produto\n");
         printf("4. Atualizar produto\n");
         printf("5. Remover produto\n");
         printf("6. Processar pedidos\n");
+        printf("7. Listar todos os pedidos\n"); // nova opção
         printf("0. Voltar\n");
-        printf("Escolha uma op��o: ");
+        printf("Escolha uma opção: ");
         scanf("%d", &opc);
         switch (opc) {
             case 1:
@@ -273,6 +303,9 @@ void lojaMenu() {
             case 6:
                 processarPedidos();
                 break;
+            case 7:
+                listarTodosPedidos();
+                break;
             case 0:
                 // volta ao menu principal
                 break;
@@ -281,3 +314,17 @@ void lojaMenu() {
         }
     } while (opc != 0);
 }
+
+// Função para definir o locale para português do Brasil
+void configurarLocale() {
+    if (setlocale(LC_ALL, "pt_BR.UTF-8") == NULL) {
+        printf("Aviso: Não foi possível configurar o locale para pt_BR.UTF-8.\n");
+    }
+}
+
+int main() {
+    configurarLocale(); // Definir locale para português do Brasil
+    lojaMenu();         // Executar o menu da loja
+    return 0;
+}
+
