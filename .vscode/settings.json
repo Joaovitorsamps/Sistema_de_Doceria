@@ -3,5 +3,6 @@
         "loja.h": "c",
         "utils.h": "c",
         "cliente.h": "c"
-    }
+    },
+    "makefile.configureOnOpen": true
 }

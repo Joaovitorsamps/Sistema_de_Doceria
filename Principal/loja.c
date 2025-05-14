@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Header/loja.h"
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Header/utils.h"
+#include "Header/loja.h"
+#include "Header/utils.h"
 
 #define MAX_LINHA 100
 

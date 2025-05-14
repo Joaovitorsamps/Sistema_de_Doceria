@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Principal/Header/cliente.h"
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Principal/Header/utils.h"
+#include "Header/cliente.h"
+#include "Header/utils.h"
 
 #define MAX_LINHA 100
 
@@ -15,7 +15,7 @@ void cadastrarUsuario() {
     scanf(" %49[^\n]", nome); // l� linha at� o fim, incluindo espa�os
     toUpperCase(nome);        // padroniza para mai�sculas
     
-    // Verifica se usu�rio j� existe em usuarios.csv
+    // Verifica se usu�rio já existe em usuarios.csv
     if (nomeExists("usuarios.csv", nome)) {
         printf("Usu�rio j� existe!\n");
         return;
@@ -41,7 +41,7 @@ int loginUsuario(char nomeLogado[]) {
     scanf(" %49[^\n]", nome);
     toUpperCase(nome);
 
-    printf("Digite a senha: ");
+printf("Digite a senha: ");
     scanf(" %19[^\n]", senha);
 
     FILE *f = fopen("usuarios.csv", "r");

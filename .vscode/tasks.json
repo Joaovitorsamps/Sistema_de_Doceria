@@ -4,8 +4,19 @@
     {
       "label": "Compilar doceria",
       "type": "shell",
-      "command": "make",        // ou "mingw32-make" se o comando make não estiver no PATH
-      "args": [],
+      "command": "gcc",
+      "args": [
+        "-Wall",
+        "-Wextra",
+        "-g3",
+        "main.c",
+        "Principal/cliente.c",
+        "Principal/loja.c",
+        "Principal/utils.c",
+        "-IHeader",
+        "-o",
+        "output/main.exe"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true

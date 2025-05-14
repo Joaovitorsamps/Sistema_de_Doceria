@@ -2,9 +2,9 @@
 // Arquivo principal com o menu de escolha entre Cliente ou Loja
 #include <stdio.h>
 #include <stdlib.h>
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Principal/Header/cliente.h"
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Principal/Header/loja.h"
-#include "C:/Users/joaov/Desktop/Sistema_Doceria/Principal/Header/utils.h"
+#include "Header/cliente.h"
+#include "Header/loja.h"
+#include "Header/utils.h"
 
 
 int main() {
