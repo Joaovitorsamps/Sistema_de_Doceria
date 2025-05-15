@@ -58,6 +58,7 @@ void adicionarProduto() {
     printf("\n=== ADICIONAR PRODUTO AO CARDÁPIO ===\n");
     printf("Digite o nome do produto: ");
     scanf(" %49[^\n]", nomeProduto);
+    toUpperCase(nomeProduto); // Converte o nome do produto para maiúsculas
     printf("Digite a quantidade disponível: ");
     scanf("%d", &quantidade);
 
@@ -115,11 +116,17 @@ void atualizarProduto() {
     fclose(temp);
 
     if (encontrado) {
-        remove("cardapio.csv");
-        rename("temp.csv", "cardapio.csv");
+        if (remove("cardapio.csv") != 0) {
+            perror("Erro ao remover cardapio.csv");
+        }
+        if (rename("temp.csv", "cardapio.csv") != 0) {
+            perror("Erro ao renomear temp.csv");
+        }
         printf("Quantidade atualizada com sucesso!\n");
     } else {
-        remove("temp.csv");
+        if (remove("temp.csv") != 0) {
+            perror("Erro ao remover temp.csv");
+        }
         printf("Produto não encontrado.\n");
     }
 }
@@ -163,11 +170,71 @@ void removerProduto() {
     fclose(temp);
 
     if (encontrado) {
-        remove("cardapio.csv");
-        rename("temp.csv", "cardapio.csv");
+        if (remove("cardapio.csv") != 0) {
+            perror("Erro ao remover cardapio.csv");
+        }
+        if (rename("temp.csv", "cardapio.csv") != 0) {
+            perror("Erro ao renomear temp.csv");
+        }
     } else {
-        remove("temp.csv");
+        if (remove("temp.csv") != 0) {
+            perror("Erro ao remover temp.csv");
+        }
         printf("Produto não encontrado.\n");
+    }
+}
+
+// Função auxiliar para decrementar quantidade do produto no cardápio após confirmação do pedido
+void decrementarQuantidadeProduto(const char *nomeProduto, int quantidadePedido) {
+    printf("Tentando decrementar o produto '%s' na quantidade %d\n", nomeProduto, quantidadePedido);
+    char nomeProdutoMaiusculo[MAX_PRODUTO];
+    strncpy(nomeProdutoMaiusculo, nomeProduto, MAX_PRODUTO - 1);
+    nomeProdutoMaiusculo[MAX_PRODUTO - 1] = '\0';
+    toUpperCase(nomeProdutoMaiusculo); // Converte para maiúsculas para garantir correspondência
+
+    FILE *f = fopen("cardapio.csv", "r");
+    if (!f) {
+        printf("Erro ao abrir cardápio para atualização.\n");
+        return;
+    }
+    FILE *temp = fopen("temp.csv", "w");
+    if (!temp) {
+        fclose(f);
+        printf("Erro ao criar arquivo temporário.\n");
+        return;
+    }
+    char linha[MAX_LINHA];
+    bool atualizado = false;
+    while (fgets(linha, sizeof(linha), f)) {
+        char produto[MAX_PRODUTO];
+        int qtd;
+        sscanf(linha, " %[^,],%d", produto, &qtd);
+        toUpperCase(produto); // Garante que o produto lido está em maiúsculas para comparação correta
+        if (strcmp(produto, nomeProdutoMaiusculo) == 0) {
+            int novaQtd = qtd - quantidadePedido;
+            if (novaQtd < 0) novaQtd = 0; // evita quantidade negativa
+            fprintf(temp, "%s,%d\n", produto, novaQtd);
+            atualizado = true;
+            printf("Produto '%s' atualizado de %d para %d unidades.\n", produto, qtd, novaQtd);
+        } else {
+            fprintf(temp, "%s,%d\n", produto, qtd);
+        }
+    }
+    fclose(f);
+    fclose(temp);
+
+    if (atualizado) {
+        if (remove("cardapio.csv") != 0) {
+            perror("Erro ao remover cardápio.csv");
+        }
+        if (rename("temp.csv", "cardapio.csv") != 0) {
+            perror("Erro ao renomear temp.csv");
+        }
+    } else {
+        if (remove("temp.csv") != 0) {
+            perror("Erro ao remover temp.csv");
+        }
+        printf("Produto %s não encontrado para atualizar quantidade.\n", nomeProduto);
     }
 }
 
@@ -219,11 +286,36 @@ void processarPedidos() {
         if (strcmp(status, "EM ESPERA") == 0) {
             atual++;
             if (atual == escolha) {
-                char novaStatus[MAX_STATUS];
-                printf("Digite novo status para este pedido (CONFIRMADO/RECUSADO): ");
-                scanf(" %19[^\n]", novaStatus);
-                fprintf(temp, "%s,%s,%d,%s\n", cliente, produto, qtd, novaStatus);
-                encontrado = true;
+                int opc;
+                do {
+                    printf("Escolha ação para este pedido:\n");
+                    printf("1 - CONFIRMAR\n");
+                    printf("2 - RECUSAR\n");
+                    printf("0 - VOLTAR\n");
+                    printf("Opção: ");
+                    scanf("%d", &opc);
+                    if (opc == 1) {
+                        // No momento de decrementar a quantidade, garantimos passar nome correto e maiúsculo
+                        char produtoMaiusculo[MAX_PRODUTO];
+                        strncpy(produtoMaiusculo, produto, MAX_PRODUTO - 1);
+                        produtoMaiusculo[MAX_PRODUTO - 1] = '\0';
+                        toUpperCase(produtoMaiusculo);
+                        fprintf(temp, "%s,%s,%d,CONFIRMADO\n", cliente, produto, qtd);
+                        decrementarQuantidadeProduto(produtoMaiusculo, qtd);
+                        printf("Pedido confirmado e cardápio atualizado.\n");
+                        encontrado = true;
+                    } else if (opc == 2) {
+                        fprintf(temp, "%s,%s,%d,RECUSADO\n", cliente, produto, qtd);
+                        printf("Pedido recusado.\n");
+                        encontrado = true;
+                    } else if (opc == 0) {
+                        fprintf(temp, "%s,%s,%d,%s\n", cliente, produto, qtd, status);
+                        printf("Operação cancelada.\n");
+                        encontrado = true;
+                    } else {
+                        printf("Opção inválida! Tente novamente.\n");
+                    }
+                } while (!encontrado);
             } else {
                 fprintf(temp, "%s,%s,%d,%s\n", cliente, produto, qtd, status);
             }
@@ -235,15 +327,17 @@ void processarPedidos() {
     fclose(f);
     fclose(temp);
 
-    if (encontrado) 
-    {
-        remove("pedidos.csv");
-        rename("temp.csv", "pedidos.csv");
-        printf("Pedido atualizado com sucesso!\n");
-    } 
-    else 
-    {
-        remove("temp.csv");
+    if (encontrado) {
+        if (remove("pedidos.csv") != 0) {
+            perror("Erro ao remover pedidos.csv");
+        }
+        if (rename("temp.csv", "pedidos.csv") != 0) {
+            perror("Erro ao renomear temp.csv");
+        }
+    } else {
+        if (remove("temp.csv") != 0) {
+            perror("Erro ao remover temp.csv");
+        }
         printf("Pedido não encontrado ou não estava em espera.\n");
     }
 }
@@ -262,7 +356,7 @@ void listarTodosPedidos() {
         char cliente[MAX_NOME], produto[MAX_PRODUTO], status[MAX_STATUS];
         int qtd;
         sscanf(linha, " %[^,],%[^,],%d,%19[^\n]", cliente, produto, &qtd, status);
-        printf("%d. Cliente: %-10s | Produto: %-12s | Quantidade: %2d | Status: %s\n",
+        printf("%d. Cliente: %-10s | Produto: %-20s | Quantidade: %2d | Status: %s\n",
                ++count, cliente, produto, qtd, status);
     }
     if (count == 0) {
