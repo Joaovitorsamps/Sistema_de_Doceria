@@ -11,7 +11,7 @@ O **Sistema de Doceria** é um programa em C com interface via terminal que perm
 - Gerenciamento do cardápio pela loja (adicionar e remover produtos).
 - Armazenamento dos dados em arquivos `.csv`.
 
-A estrutura do programa é organizada em múltiplos arquivos `.c` e `.h`, utilizando `locale.h` para configuração regional e promovendo a modularização com funções específicas para cada área do sistema.
+A estrutura do programa é organizada em múltiplos arquivos .c e .h
 
 ---
 
