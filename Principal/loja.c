@@ -235,11 +235,14 @@ void processarPedidos() {
     fclose(f);
     fclose(temp);
 
-    if (encontrado) {
+    if (encontrado) 
+    {
         remove("pedidos.csv");
         rename("temp.csv", "pedidos.csv");
         printf("Pedido atualizado com sucesso!\n");
-    } else {
+    } 
+    else 
+    {
         remove("temp.csv");
         printf("Pedido não encontrado ou não estava em espera.\n");
     }

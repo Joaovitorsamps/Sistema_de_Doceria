@@ -37,22 +37,22 @@ A estrutura do programa é organizada em múltiplos arquivos .c e .h
 
 ## 📁 Organização do Projeto
 
-Sistema_de_Doceria/
-├── main.c # Menu principal e lógica de execução
-├── Principal/
-│ ├── cliente.c # Lógica da área do cliente
-│ ├── loja.c # Lógica da área da loja
-│ ├── utils.c # Funções utilitárias comuns
-│ └── *.h # Headers correspondentes
-| └── cliente.h
-| └── loja.h
-| └── utils.h
-├── output/
-│ └── main.exe # Executável final
-| └── pedidos.csv
-| └── usuarios.csv
-| └── cardapio.csv
-└── README.md # Este arquivo
+- Sistema_de_Doceria/
+- ├── main.c # Menu principal e lógica de execução
+- ├── Principal/
+- │ ├── cliente.c # Lógica da área do cliente
+- │ ├── loja.c # Lógica da área da loja
+- │ ├── utils.c # Funções utilitárias comuns
+- │ └── *.h # Headers correspondentes
+- | └── cliente.h
+- | └── loja.h
+- | └── utils.h
+- ├── output/
+- │ └── main.exe # Executável final
+- | └── pedidos.csv
+- | └── usuarios.csv
+- | └── cardapio.csv
+- └── README.md # Este arquivo
 
 
 ---
