@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <locale.h> // Para setlocale
 #include <stdbool.h> // Para usar bool
 #include "./loja.h"
 #include "./utils.h"
@@ -280,7 +279,7 @@ void lojaMenu() {
         printf("4. Atualizar produto\n");
         printf("5. Remover produto\n");
         printf("6. Processar pedidos\n");
-        printf("7. Listar todos os pedidos\n"); // nova opção
+        printf("7. Listar todos os pedidos\n");
         printf("0. Voltar\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opc);
@@ -314,17 +313,3 @@ void lojaMenu() {
         }
     } while (opc != 0);
 }
-
-// Função para definir o locale para português do Brasil
-void configurarLocale() {
-    if (setlocale(LC_ALL, "pt_BR.UTF-8") == NULL) {
-        printf("Aviso: Não foi possível configurar o locale para pt_BR.UTF-8.\n");
-    }
-}
-
-int main() {
-    configurarLocale(); // Definir locale para português do Brasil
-    lojaMenu();         // Executar o menu da loja
-    return 0;
-}
-
