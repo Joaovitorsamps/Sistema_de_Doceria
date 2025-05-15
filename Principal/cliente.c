@@ -35,7 +35,8 @@ void cadastrarUsuario() {
 }
 
 // Função de login do usuário; retorna 1 em sucesso, 0 caso contrário
-int loginUsuario(char nomeLogado[]) {
+int loginUsuario(char nomeLogado[]) 
+{
     char nome[MAX_NOME], senha[MAX_SENHA];
     printf("\n=== LOGIN DO USUÁRIO ===\n");
     printf("Digite o nome do usuário: ");
@@ -46,16 +47,19 @@ int loginUsuario(char nomeLogado[]) {
     scanf(" %19[^\n]", senha);
 
     FILE *f = fopen("usuarios.csv", "r");
-    if (f == NULL) {
+    if (f == NULL) 
+    {
         printf("Erro ao abrir arquivo de usuários.\n");
         return 0;
     }
     char linha[MAX_LINHA];
-    while (fgets(linha, sizeof(linha), f)) {
+    while (fgets(linha, sizeof(linha), f)) 
+    {
         // Extrai nome e senha separados por vírgula
         char *tokNome = strtok(linha, ",");
         char *tokSenha = strtok(NULL, "\n");
-        if (tokNome && tokSenha && strcmp(tokNome, nome) == 0 && strcmp(tokSenha, senha) == 0) {
+        if (tokNome && tokSenha && strcmp(tokNome, nome) == 0 && strcmp(tokSenha, senha) == 0) 
+        {
             strcpy(nomeLogado, nome);
             fclose(f);
             return 1; // login correto
@@ -67,21 +71,24 @@ int loginUsuario(char nomeLogado[]) {
 }
 
 // Função para exibir cardápio e realizar pedido
-void fazerPedido(const char nomeUsuario[]) {
+void fazerPedido(const char nomeUsuario[]) 
+{
     printf("\n=== FAZER PEDIDO ===\n");
     FILE *f = fopen("cardapio.csv", "r");
-    if (!f) {
+    if (!f) 
+    {
         printf("Erro ao abrir cardápio.\n");
         return;
     }
     char linha[MAX_LINHA];
     int index = 1;
     printf("Código | Produto      | Quantidade disponível\n");
-    while (fgets(linha, sizeof(linha), f)) {
+    while (fgets(linha, sizeof(linha), f)) 
+    {
         char produto[MAX_PRODUTO];
         int qtd;
         sscanf(linha, " %49[^,],%d", produto, &qtd); // lê "produto" até vírgula e quantidade
-        printf("%6d | %-12s | %d\n", index, produto, qtd);
+        printf("%6d | %-25s | %d\n", index, produto, qtd);
         index++;
     }
     fclose(f);
@@ -89,7 +96,8 @@ void fazerPedido(const char nomeUsuario[]) {
     int opcao, qtdPedido;
     printf("Digite o código do produto desejado (0 para cancelar): ");
     scanf("%d", &opcao);
-    if (opcao == 0) {
+    if (opcao == 0) 
+    {
         return; // cancelado
     }
     printf("Digite a quantidade desejada: ");
@@ -97,7 +105,8 @@ void fazerPedido(const char nomeUsuario[]) {
 
     // Reabre cardápio para verificar disponibilidade do item escolhido
     f = fopen("cardapio.csv", "r");
-    if (!f) {
+    if (!f) 
+    {
         printf("Erro ao abrir cardápio.\n");
         return;
     }
@@ -105,7 +114,8 @@ void fazerPedido(const char nomeUsuario[]) {
     char produtoEscolhido[MAX_PRODUTO];
     int qtdDisponivel;
     bool encontrado = false;
-    while (fgets(linha, sizeof(linha), f)) {
+    while (fgets(linha, sizeof(linha), f)) 
+    {
         char produto[MAX_PRODUTO];
         int qtd;
         sscanf(linha, " %49[^,],%d", produto, &qtd);
@@ -167,7 +177,7 @@ void verPedidos(const char nomeUsuario[]) {
 // Menu de opções da área do cliente (cadastro, login e após login)
 void clienteMenu() {
     // Configurar locale para português do Brasil
-    if (setlocale(LC_ALL, "pt_BR.UTF-8") == NULL) {
+    if (setlocale(LC_ALL, "portuguese") == NULL) {
         printf("Aviso: Não foi possível configurar o locale para pt_BR.UTF-8.\n");
     }
 
